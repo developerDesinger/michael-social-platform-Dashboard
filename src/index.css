@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+body {
+  @apply bg-white text-text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-teal-primary text-white rounded-lg font-medium hover:bg-teal-dark transition-all duration-200 text-sm;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-text-primary rounded-lg font-medium hover:bg-gray-300 transition-all duration-200 text-sm;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-accent focus:ring-1 focus:ring-teal-accent transition-all duration-200 text-sm;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-success;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-danger;
+  }
+
+  .badge-warning {
+    @apply bg-amber-100 text-warning;
+  }
+}
