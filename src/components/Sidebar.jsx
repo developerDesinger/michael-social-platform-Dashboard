@@ -2,14 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "./Logo";
-import {
-  Home,
-  Users,
-  BarChart3,
-  Flag,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { Home, Users, BarChart3, Flag, Settings, LogOut } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -34,7 +27,14 @@ export default function Sidebar() {
           className="flex items-center gap-3 hover:opacity-80 transition"
         >
           <Logo size={40} />
-          <h1 className="text-white" style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+          <h1
+            className="text-white"
+            style={{
+              fontSize: "18px",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+            }}
+          >
             SocialAdmin
           </h1>
         </Link>
@@ -55,7 +55,7 @@ export default function Sidebar() {
                       ? "bg-teal-primary text-white border-l-4 border-teal-accent"
                       : "text-teal-light hover:text-white hover:bg-white/6"
                   }`}
-                  style={{ fontSize: '14px', fontWeight: 500 }}
+                  style={{ fontSize: "14px", fontWeight: 500 }}
                 >
                   <Icon size={20} />
                   <span>{item.label}</span>
@@ -71,11 +71,16 @@ export default function Sidebar() {
         <div className="bg-teal-primary/30 rounded-lg p-4 mb-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-teal-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              {user?.avatar || "SA"}
+              {user?.fullName
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase() || "SA"}
             </div>
             <div className="flex-1">
               <p className="text-white font-semibold text-sm">
-                {user?.name || "Super Admin"}
+                {user?.fullName || "Super Admin"}
               </p>
               <p className="text-teal-light text-xs">
                 {user?.role || "Administrator"}

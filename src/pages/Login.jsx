@@ -1,36 +1,44 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useUI } from "../context/UIContext";
 import { Logo } from "../components/Logo";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [email, setEmail] = useState("admin@social.com");
-  const [password, setPassword] = useState("admin123");
+  const { showToast, showLoader, hideLoader } = useUI();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+    showLoader("Signing in...");
 
-    // Simulate API call
-    setTimeout(() => {
-      if (
-        email === "admin@social.com" &&
-        password === "admin123"
-      ) {
-        login(email);
+    try {
+      const result = await login({ email, password });
+
+      if (result.success) {
+        showToast("Login successful! Welcome back.", "success");
         navigate("/dashboard");
       } else {
-        setError("Invalid credentials. Please try again.");
+        setError(result.error);
+        showToast(result.error, "error");
       }
+    } catch (err) {
+      const errorMessage = err.message || "An unexpected error occurred";
+      setError(errorMessage);
+      showToast(errorMessage, "error");
+    } finally {
       setIsLoading(false);
-    }, 500);
+      hideLoader();
+    }
   };
 
   const today = new Date().toLocaleDateString("en-US", {
@@ -41,33 +49,30 @@ export default function Login() {
   });
 
   return (
-    <div className="flex h-screen bg-white">
-      {/* Left Panel - Image */}
-      <div 
-        className="hidden md:flex md:w-3/5 flex-col items-center justify-center relative overflow-hidden bg-gradient-to-b from-gray-50 to-white border-r border-gray-200"
-        style={{
-          backgroundImage: 'url(/Loginleft.png)',
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundOrigin: 'padding-box',
-        }}
-      >
-      </div>
-
-      {/* Right Panel - Form */}
-      <div className="w-full md:w-2/5 flex flex-col items-center justify-center p-8 bg-white">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Centered Form */}
+      <div className="w-full flex flex-col items-center justify-center p-8">
         <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="md:hidden flex items-center justify-center mb-8">
-            <Logo size={48} />
+          {/* Logo */}
+          <div className="flex items-center justify-center mb-8">
+            <Logo size={100} />
           </div>
 
           <div className="mb-10">
-            <h2 className="text-gray-700 mb-3" style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+            <h2
+              className="text-gray-700 mb-3"
+              style={{
+                fontSize: "32px",
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
+              }}
+            >
               Admin Sign In
             </h2>
-            <p className="text-gray-500" style={{ fontSize: '14px', fontWeight: 400 }}>
+            <p
+              className="text-gray-500"
+              style={{ fontSize: "14px", fontWeight: 400 }}
+            >
               Access the management dashboard
             </p>
           </div>
@@ -75,7 +80,10 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
-              <label className="block text-gray-700 mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+              <label
+                className="block text-gray-700 mb-2"
+                style={{ fontSize: "14px", fontWeight: 500 }}
+              >
                 Email
               </label>
               <input
@@ -90,7 +98,10 @@ export default function Login() {
 
             {/* Password */}
             <div>
-              <label className="block text-gray-700 mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+              <label
+                className="block text-gray-700 mb-2"
+                style={{ fontSize: "14px", fontWeight: 500 }}
+              >
                 Password
               </label>
               <div className="relative">
@@ -108,11 +119,7 @@ export default function Login() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
                   disabled={isLoading}
                 >
-                  {showPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -129,7 +136,7 @@ export default function Login() {
               type="submit"
               disabled={isLoading}
               className="w-full py-3 bg-teal-accent hover:bg-teal-primary text-white font-semibold rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ marginTop: '28px', fontSize: '16px', fontWeight: 600 }}
+              style={{ marginTop: "28px", fontSize: "16px", fontWeight: 600 }}
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
@@ -137,7 +144,10 @@ export default function Login() {
 
           {/* Footer */}
           <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-            <p className="text-gray-400" style={{ fontSize: '12px', fontWeight: 400 }}>
+            <p
+              className="text-gray-400"
+              style={{ fontSize: "12px", fontWeight: 400 }}
+            >
               Today, {today}
             </p>
           </div>

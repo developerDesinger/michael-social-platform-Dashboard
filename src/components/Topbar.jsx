@@ -35,7 +35,10 @@ export default function Topbar() {
   return (
     <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 fixed top-0 left-60 right-0 z-40">
       {/* Title */}
-      <h1 className="text-text-primary" style={{ fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+      <h1
+        className="text-text-primary"
+        style={{ fontSize: "20px", fontWeight: 700, letterSpacing: "-0.02em" }}
+      >
         {getTitleFromRoute()}
       </h1>
 
@@ -68,14 +71,19 @@ export default function Topbar() {
             onClick={() => setShowDropdown(!showDropdown)}
             className="w-10 h-10 bg-teal-primary text-white rounded-full font-semibold flex items-center justify-center hover:bg-teal-accent transition cursor-pointer"
           >
-            {user?.avatar || "SA"}
+            {user?.fullName
+              ?.split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase() || "SA"}
           </button>
 
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
               <div className="px-4 py-2 border-b border-gray-200">
                 <p className="font-semibold text-text-primary">
-                  {user?.name}
+                  {user?.fullName}
                 </p>
                 <p className="text-sm text-text-secondary">{user?.email}</p>
               </div>

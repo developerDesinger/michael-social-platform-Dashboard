@@ -35,29 +35,50 @@ export default function Settings() {
     <div className="space-y-8 max-w-3xl">
       {/* Header */}
       <div>
-        <h1 className="text-text-primary mb-1" style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+        <h1
+          className="text-text-primary mb-1"
+          style={{
+            fontSize: "28px",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+          }}
+        >
           Settings
         </h1>
-        <p className="text-text-secondary" style={{ fontSize: '14px', fontWeight: 400 }}>
+        <p
+          className="text-text-secondary"
+          style={{ fontSize: "14px", fontWeight: 400 }}
+        >
           Manage your profile and platform settings
         </p>
       </div>
 
       {/* Admin Profile Section */}
       <div className="card">
-        <h2 className="text-text-primary mb-6" style={{ fontSize: '15px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <h2
+          className="text-text-primary mb-6"
+          style={{
+            fontSize: "15px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
           Admin Profile
         </h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Name */}
           <div>
-            <label className="block text-text-primary mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+            <label
+              className="block text-text-primary mb-2"
+              style={{ fontSize: "14px", fontWeight: 500 }}
+            >
               Full Name
             </label>
             <input
               type="text"
-              value={user?.name || "Super Admin"}
+              value={user?.fullName || "Super Admin"}
               disabled
               className="input-field bg-gray-50 disabled:opacity-75"
             />
@@ -65,7 +86,10 @@ export default function Settings() {
 
           {/* Email */}
           <div>
-            <label className="block text-text-primary mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+            <label
+              className="block text-text-primary mb-2"
+              style={{ fontSize: "14px", fontWeight: 500 }}
+            >
               Email Address
             </label>
             <input
@@ -79,17 +103,31 @@ export default function Settings() {
 
         {/* Change Password */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <h3 className="text-text-primary mb-4" style={{ fontSize: '15px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <h3
+            className="text-text-primary mb-4"
+            style={{
+              fontSize: "15px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+            }}
+          >
             Change Password
           </h3>
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-text-primary mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+                <label
+                  className="block text-text-primary mb-2"
+                  style={{ fontSize: "14px", fontWeight: 500 }}
+                >
                   New Password
                 </label>
                 <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Lock
+                    size={18}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
                   <input
                     type="password"
                     value={password}
@@ -101,11 +139,17 @@ export default function Settings() {
               </div>
 
               <div>
-                <label className="block text-text-primary mb-2" style={{ fontSize: '14px', fontWeight: 500 }}>
+                <label
+                  className="block text-text-primary mb-2"
+                  style={{ fontSize: "14px", fontWeight: 500 }}
+                >
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Lock
+                    size={18}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
                   <input
                     type="password"
                     value={confirmPassword}
@@ -125,7 +169,15 @@ export default function Settings() {
 
       {/* Platform Settings */}
       <div className="card">
-        <h2 className="text-text-primary mb-6" style={{ fontSize: '15px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <h2
+          className="text-text-primary mb-6"
+          style={{
+            fontSize: "15px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
           Platform Settings
         </h2>
 
@@ -133,10 +185,16 @@ export default function Settings() {
           {/* Allow New Registrations */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>
-              <h3 className="text-text-primary" style={{ fontSize: '13px', fontWeight: 600 }}>
+              <h3
+                className="text-text-primary"
+                style={{ fontSize: "13px", fontWeight: 600 }}
+              >
                 Allow New Registrations
               </h3>
-              <p className="text-text-secondary" style={{ fontSize: '13px', fontWeight: 400 }}>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "13px", fontWeight: 400 }}
+              >
                 Allow users to create new accounts
               </p>
             </div>
@@ -157,10 +215,16 @@ export default function Settings() {
           {/* Maintenance Mode */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>
-              <h3 className="text-text-primary" style={{ fontSize: '13px', fontWeight: 600 }}>
+              <h3
+                className="text-text-primary"
+                style={{ fontSize: "13px", fontWeight: 600 }}
+              >
                 Maintenance Mode
               </h3>
-              <p className="text-text-secondary" style={{ fontSize: '13px', fontWeight: 400 }}>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "13px", fontWeight: 400 }}
+              >
                 Temporarily disable access to the platform
               </p>
             </div>
@@ -181,10 +245,16 @@ export default function Settings() {
           {/* Email Notifications */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>
-              <h3 className="text-text-primary" style={{ fontSize: '13px', fontWeight: 600 }}>
+              <h3
+                className="text-text-primary"
+                style={{ fontSize: "13px", fontWeight: 600 }}
+              >
                 Email Notifications
               </h3>
-              <p className="text-text-secondary" style={{ fontSize: '13px', fontWeight: 400 }}>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "13px", fontWeight: 400 }}
+              >
                 Receive notifications for system events
               </p>
             </div>
@@ -205,10 +275,7 @@ export default function Settings() {
 
         {/* Save Button */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <button
-            onClick={handleSaveSettings}
-            className="btn-primary"
-          >
+          <button onClick={handleSaveSettings} className="btn-primary">
             Save Settings
           </button>
         </div>
