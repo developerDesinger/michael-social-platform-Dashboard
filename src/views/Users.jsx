@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Search, Download, Filter } from "lucide-react";
 import { useUI } from "../context/UIContext";
 import { usersAPI } from "../utils/api";
@@ -10,6 +10,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
@@ -19,11 +20,7 @@ export default function Users() {
   });
 
   // Fetch users on mount and when filters change
-  useEffect(() => {
-    fetchUsers();
-  }, [filters]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const params = {};
@@ -33,8 +30,8 @@ export default function Users() {
 
       const response = await usersAPI.getAll(params);
 
-      if (response.success && response.data) {
-        setUsers(Array.isArray(response.data) ? response.data : []);
+      if (response.success && response.users) {
+        setUsers(Array.isArray(response.users) ? response.users : []);
       } else {
         setUsers([]);
       }
@@ -45,30 +42,28 @@ export default function Users() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filters, showToast]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const filteredUsers = users.filter(
     (user) =>
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.username?.toLowerCase().includes(searchTerm.toLowerCase()),
+      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handleViewUser = async (user) => {
-    try {
-      showLoader("Loading user details...");
-      const response = await usersAPI.getById(user.id);
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setIsEditMode(false);
+    setIsModalOpen(true);
+  };
 
-      if (response.success && response.data) {
-        setSelectedUser(response.data);
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      console.error("Failed to fetch user details:", error);
-      showToast("Failed to load user details.", "error");
-    } finally {
-      hideLoader();
-    }
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setIsEditMode(true);
+    setIsModalOpen(true);
   };
 
   const handleDeleteUser = async (userId) => {
@@ -96,22 +91,21 @@ export default function Users() {
     try {
       showLoader(suspend ? "Suspending user..." : "Activating user...");
       const response = await usersAPI.update(userId, {
-        status: suspend ? "Suspended" : "Active",
+        status: suspend ? "INACTIVE" : "ACTIVE",
       });
 
       if (response.success) {
         setUsers(
           users.map((u) =>
             u.id === userId
-              ? { ...u, status: suspend ? "Suspended" : "Active" }
+              ? { ...u, status: suspend ? "INACTIVE" : "ACTIVE" }
               : u,
           ),
         );
-        const updatedUser = users.find((u) => u.id === userId);
-        if (updatedUser) {
+        if (selectedUser?.id === userId) {
           setSelectedUser({
-            ...updatedUser,
-            status: suspend ? "Suspended" : "Active",
+            ...selectedUser,
+            status: suspend ? "INACTIVE" : "ACTIVE",
           });
         }
         showToast(
@@ -129,8 +123,33 @@ export default function Users() {
     }
   };
 
+  const handleUpdateUser = async (userId, data) => {
+    try {
+      showLoader("Updating user...");
+      const response = await usersAPI.update(userId, data);
+
+      if (response.success) {
+        setUsers(users.map((u) => (u.id === userId ? { ...u, ...data } : u)));
+        if (selectedUser?.id === userId) {
+          setSelectedUser({ ...selectedUser, ...data });
+        }
+        showToast("User updated successfully", "success");
+        return true;
+      } else {
+        showToast(response.message || "Failed to update user", "error");
+        return false;
+      }
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      showToast("Failed to update user. Please try again.", "error");
+      return false;
+    } finally {
+      hideLoader();
+    }
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -151,7 +170,6 @@ export default function Users() {
             Manage and monitor all platform users
           </p>
         </div>
-        <button className="btn-primary">+ Add User</button>
       </div>
 
       {/* Filters Section */}
@@ -179,9 +197,8 @@ export default function Users() {
             onChange={(e) => setFilters({ ...filters, role: e.target.value })}
           >
             <option value="">All Roles</option>
-            <option value="Creator">Creator</option>
-            <option value="Director">Director</option>
-            <option value="Member">Member</option>
+            <option value="ADMIN">Admin</option>
+            <option value="CLIENT">Client</option>
           </select>
 
           <select
@@ -190,9 +207,8 @@ export default function Users() {
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
           >
             <option value="">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Suspended">Suspended</option>
-            <option value="Pending">Pending</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
           </select>
         </div>
 
@@ -228,6 +244,7 @@ export default function Users() {
         <UserTable
           users={filteredUsers}
           onViewUser={handleViewUser}
+          onEditUser={handleEditUser}
           onDeleteUser={handleDeleteUser}
           onSuspendUser={handleSuspendUser}
         />
@@ -249,11 +266,15 @@ export default function Users() {
       <UserModal
         user={selectedUser}
         isOpen={isModalOpen}
+        initialEditMode={isEditMode}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedUser(null);
+          setIsEditMode(false);
         }}
         onSuspend={handleSuspendUser}
+        onUpdate={handleUpdateUser}
+        onDelete={handleDeleteUser}
       />
     </div>
   );
