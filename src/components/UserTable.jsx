@@ -1,23 +1,21 @@
 import React, { useState } from "react";
-import {
-  Eye,
-  Pencil,
-  Trash2,
-  Lock,
-  Unlock,
-} from "lucide-react";
+import { Eye, Pencil, Trash2, Lock, Unlock } from "lucide-react";
 
-export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUser }) {
+export default function UserTable({
+  users,
+  onViewUser,
+  onEditUser,
+  onDeleteUser,
+  onSuspendUser,
+}) {
   const [expandedRow, setExpandedRow] = useState(null);
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
-      case "Active":
+      case "ACTIVE":
         return "bg-green-100 text-success";
-      case "Suspended":
+      case "INACTIVE":
         return "bg-red-100 text-danger";
-      case "Pending":
-        return "bg-amber-100 text-warning";
       default:
         return "bg-gray-100 text-gray-600";
     }
@@ -25,12 +23,10 @@ export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUs
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case "Creator":
+      case "ADMIN":
+        return "bg-purple-100 text-purple-600";
+      case "CLIENT":
         return "bg-teal-100 text-teal-primary";
-      case "Director":
-        return "bg-blue-100 text-blue-600";
-      case "Member":
-        return "bg-gray-100 text-gray-600";
       default:
         return "bg-gray-100 text-gray-600";
     }
@@ -38,15 +34,37 @@ export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUs
 
   const getAvatarColor = (role) => {
     switch (role) {
-      case "Creator":
+      case "ADMIN":
+        return "bg-purple-500";
+      case "CLIENT":
         return "bg-teal-primary";
-      case "Director":
-        return "bg-blue-500";
-      case "Member":
-        return "bg-gray-400";
       default:
         return "bg-gray-400";
     }
+  };
+
+  const getInitials = (fullName) => {
+    if (!fullName) return "?";
+    return fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatId = (id) => {
+    if (!id) return "N/A";
+    return id.length > 10 ? `${id.slice(0, 8)}...` : id;
   };
 
   return (
@@ -55,14 +73,94 @@ export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUs
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>#</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Name</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>User ID</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Joined</th>
-              <th className="px-6 py-3 text-left text-text-primary" style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                #
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Name
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                User ID
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Email
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Role
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Status
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Joined
+              </th>
+              <th
+                className="px-6 py-3 text-left text-text-primary"
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -73,45 +171,41 @@ export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUs
                   idx % 2 === 0 ? "bg-white" : "bg-gray-50"
                 }`}
               >
-                <td className="px-6 py-4 text-sm text-text-secondary">{idx + 1}</td>
+                <td className="px-6 py-4 text-sm text-text-secondary">
+                  {idx + 1}
+                </td>
                 <td className="px-6 py-4 text-sm">
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-8 h-8 ${getAvatarColor(
-                        user.role
+                        user.role,
                       )} rounded-full flex items-center justify-center text-white font-semibold text-xs`}
                     >
-                      {user.avatar}
+                      {getInitials(user.fullName)}
                     </div>
                     <span className="font-medium text-text-primary">
-                      {user.name}
+                      {user.fullName || "N/A"}
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-text-secondary">
-                  {user.id}
+                <td className="px-6 py-4 text-sm text-text-secondary font-mono">
+                  {formatId(user.id)}
                 </td>
                 <td className="px-6 py-4 text-sm text-text-secondary">
                   {user.email}
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span
-                    className={`badge ${getRoleBadgeColor(user.role)}`}
-                  >
+                  <span className={`badge ${getRoleBadgeColor(user.role)}`}>
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <span
-                    className={`badge ${getStatusBadgeColor(
-                      user.status
-                    )}`}
-                  >
+                  <span className={`badge ${getStatusBadgeColor(user.status)}`}>
                     {user.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-text-secondary">
-                  {user.joined}
+                  {formatDate(user.createdAt)}
                 </td>
                 <td className="px-6 py-4 text-sm">
                   <div className="flex items-center gap-2">
@@ -122,18 +216,23 @@ export default function UserTable({ users, onViewUser, onDeleteUser, onSuspendUs
                     >
                       <Eye size={16} className="text-teal-primary" />
                     </button>
-                    <button
+                    {/* <button
+                      onClick={() => onEditUser(user)}
                       className="p-1.5 hover:bg-gray-200 rounded transition"
                       title="Edit"
                     >
                       <Pencil size={16} className="text-blue-500" />
-                    </button>
+                    </button> */}
                     <button
-                      onClick={() => onSuspendUser(user.id, user.status !== "Suspended")}
+                      onClick={() =>
+                        onSuspendUser(user.id, user.status !== "INACTIVE")
+                      }
                       className="p-1.5 hover:bg-gray-200 rounded transition"
-                      title={user.status === "Suspended" ? "Activate" : "Suspend"}
+                      title={
+                        user.status === "INACTIVE" ? "Activate" : "Suspend"
+                      }
                     >
-                      {user.status === "Suspended" ? (
+                      {user.status === "INACTIVE" ? (
                         <Unlock size={16} className="text-success" />
                       ) : (
                         <Lock size={16} className="text-warning" />

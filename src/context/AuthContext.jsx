@@ -15,8 +15,8 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const response = await authAPI.getMe();
-          if (response.success && response.data) {
-            setUser(response.data);
+          if (response.success && response.user) {
+            setUser(response.user);
             setIsAuthenticated(true);
           } else {
             // Invalid token
