@@ -13,8 +13,6 @@ import Dashboard from "./pages/Dashboard";
 import Overview from "./views/Overview";
 import Users from "./views/Users";
 import Analytics from "./views/Analytics";
-import Reports from "./views/Reports";
-import Settings from "./views/Settings";
 
 export default function App() {
   return (
@@ -37,8 +35,6 @@ export default function App() {
               <Route index element={<Overview />} />
               <Route path="users" element={<Users />} />
               <Route path="analytics" element={<Analytics />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="settings" element={<Settings />} />
             </Route>
 
             {/* Redirect to login */}

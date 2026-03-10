@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "./Logo";
-import { Home, Users, BarChart3, Flag, Settings, LogOut } from "lucide-react";
+import { Home, Users, BarChart3, LogOut } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -12,8 +12,6 @@ export default function Sidebar() {
     { label: "Home", icon: Home, path: "/dashboard" },
     { label: "Users", icon: Users, path: "/dashboard/users" },
     { label: "Analytics", icon: BarChart3, path: "/dashboard/analytics" },
-    { label: "Reports", icon: Flag, path: "/dashboard/reports" },
-    { label: "Settings", icon: Settings, path: "/dashboard/settings" },
   ];
 
   const isActive = (path) => location.pathname === path;
